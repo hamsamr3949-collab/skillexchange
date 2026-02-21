@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SkillExchange | Pro Startup Edition</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;}
+body{background:#0b0f19;color:#e5e7eb;overflow-x:hidden;perspective:1200px;}
+
+/* LOGIN */
+.login-wrapper{
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background: radial-gradient(circle at center, #1e293b 0%, #020617 100%);
+position: relative;
+overflow: hidden;
+}
+
+/* Coding Background Animation */
+#loginCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.15;
+}
+
+.card{
+background:rgba(30, 41, 59, 0.7);
+backdrop-filter:blur(20px);
+padding:45px 35px;
+border-radius:25px;
+width:370px;
+box-shadow:0 20px 50px rgba(0,0,0,0.5);
+text-align:center;
+transition:0.5s;
+border: 1px solid rgba(255,255,255,0.1);
+z-index: 1;
+}
+
+.card h2{margin-bottom:25px;color:#60a5fa;font-size:24px; letter-spacing: 1px;}
+
+.card input{
+width:100%;padding:14px;margin:12px 0;
+border:1px solid #334155;border-radius:12px;
+background:#0f172a;color:white;
+outline:none;transition:0.3s;
+}
+.card input:focus{border-color: #3b82f6; box-shadow:0 0 15px rgba(59, 130, 246, 0.3);}
+
+button{
+width:100%;padding:14px;margin-top:12px;
+border:none;border-radius:12px;
+cursor:pointer;font-weight:bold;
+transition:0.3s;
+}
+.login-btn{background:linear-gradient(45deg,#2563eb,#1d4ed8);color:white;}
+.register-btn{background:linear-gradient(45deg,#10b981,#059669);color:white;}
+.trial-btn{background:linear-gradient(45deg,#f59e0b,#d97706);color:white;}
+button:hover{transform:translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.3);}
+
+/* NAV */
+nav{position:fixed;width:100%;background:rgba(15,23,42,0.9);backdrop-filter:blur(12px);display:none;z-index:1000; border-bottom: 1px solid rgba(255,255,255,0.1);}
+.nav-inner{display:flex;justify-content:space-between;padding:10px 5%;align-items:center;}
+.logo{color:#60a5fa;font-weight:800;font-size:22px; letter-spacing: -1px;}
+.nav-links{display:flex;gap:20px;align-items:center;}
+.nav-links a{cursor:pointer;transition:0.3s; font-size: 13px; font-weight: 500; color: #cbd5e1;}
+.nav-links a:hover{color:#60a5fa;}
+
+.admin-pill {
+    display: flex;
+    align-items: center;
+    background: #1e293b;
+    padding: 5px 15px 5px 5px;
+    border-radius: 30px;
+    border: 1px solid #334155;
+    margin-left: 10px;
+}
+.admin-pill img {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    margin-right: 8px;
+    border: 2px solid #60a5fa;
+}
+.admin-pill span { font-size: 12px; font-weight: 600; color: #f8fafc; }
+
+.page{display:none;padding:120px 5% 80px;}
+.page.active{display:block;}
+
+.back-btn {
+    background: #1e2937;
+    color: #60a5fa;
+    padding: 8px 15px;
+    border-radius: 8px;
+    border: 1px solid #334155;
+    cursor: pointer;
+    margin-bottom: 20px;
+    display: inline-block;
+}
+
+/* Home Styling */
+.hero{text-align:center;animation:fadeIn 1.5s ease forwards;opacity:0;}
+@keyframes fadeIn{to{opacity:1;}}
+.hero h1{font-size:56px;margin-bottom:20px; background: linear-gradient(to right, #fff, #60a5fa); -webkit-background-clip: text; -webkit-text-fill-color: transparent;}
+.hero p{max-width:800px;margin:auto;font-size:18px;color:#94a3b8; line-height: 1.6;}
+
+/* Arcade / Games Styling */
+.arcade-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 20px; }
+.game-card { background: #111827; border: 1px solid #1e293b; padding: 25px; border-radius: 15px; text-align: center; }
+.decode-area { background: #000; color: #10b981; padding: 20px; font-family: monospace; font-size: 20px; margin: 10px 0; min-height: 60px; border-radius: 8px;}
+.memory-box { background: #1e293b; color: #fff; padding: 20px; font-family: 'Courier New', Courier, monospace; min-height: 80px; margin: 10px 0; border: 1px dashed #60a5fa; border-radius: 8px;}
+
+/* Grid System */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:25px;margin-top:40px;}
+
+.card-course{
+background:#1e293b;
+padding:25px;
+border-radius:20px;
+transition:0.4s;
+border: 1px solid rgba(255,255,255,0.05);
+position: relative;
+display: flex;
+flex-direction: column;
+justify-content: space-between;
+}
+.card-course:hover{
+transform: translateY(-10px);
+box-shadow:0 20px 40px rgba(0,0,0,0.4);
+border-color: #3b82f6;
+}
+.course-title{font-size:20px;color:#f8fafc;margin-bottom:10px; font-weight: 700;}
+.wishlist-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    color: #475569;
+    font-size: 20px;
+    width: auto; margin: 0; padding: 0;
+}
+.wishlist-btn.active { color: #ef4444; }
+
+select,textarea,input[type="text"]{width:100%;padding:12px;margin-top:8px;border-radius:8px;background:#0f172a;color:white;border:1px solid #334155; outline: none;}
+select:focus, textarea:focus, input:focus{border-color: #60a5fa;}
+
+.primary-btn{background:#3b82f6;color:white;margin-top:15px;}
+.study-btn{background:#8b5cf6;color:white;margin-top:10px;}
+.exchange-btn{background: #10b981; color: white; margin-top: 10px;}
+
+.link{margin-top:18px;font-size:14px;cursor:pointer;color:#93c5fd;}
+.hidden{display:none;}
+
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);backdrop-filter:blur(5px);justify-content:center;align-items:center; z-index: 2000;}
+.modal-content{background:#111827;padding:30px;border-radius:20px;width:90%;max-width:700px;max-height:85vh;overflow:auto; border: 1px solid #334155;}
+.timer{text-align:right;color:#f87171;font-weight:bold;margin-bottom:10px;}
+
+/* Assessment Styles */
+.question-block { margin-bottom: 25px; padding: 15px; background: #0f172a; border-radius: 10px; border-left: 4px solid #3b82f6;}
+.question-text { font-weight: 600; margin-bottom: 12px; display: block;}
+.option-label { display: block; padding: 8px; cursor: pointer; border-radius: 6px; transition: 0.2s;}
+.option-label:hover { background: #1e293b;}
+
+/* SKILL EXCHANGE PORTAL */
+.exchange-container {
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    gap: 40px;
+    align-items: start;
+}
+@media (max-width: 900px) {
+    .exchange-container { grid-template-columns: 1fr; }
+}
+
+.exchange-sidebar {
+    background: #111827;
+    padding: 30px;
+    border-radius: 20px;
+    border: 1px solid #334155;
+    position: sticky;
+    top: 100px;
+}
+
+.mentor-badge {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: bold;
+    display: inline-block;
+    margin-bottom: 10px;
+}
+
+/* STREAK COUNTER */
+.streak-counter { display: inline-flex; align-items: center; gap: 8px; background: rgba(245, 158, 11, 0.2); color: #f59e0b; padding: 5px 12px; border-radius: 20px; font-weight: bold; border: 1px solid #f59e0b; margin-top: 10px;}
+
+/* STUDY NOTES TABS */
+.note-tab-btn {
+    padding: 8px 15px; background: #1e293b; border: 1px solid #334155; color: #94a3b8; border-radius: 5px; cursor: pointer; white-space: nowrap;
+}
+.note-tab-btn.active {
+    background: #3b82f6; color: white; border-color: #3b82f6;
+}
+.note-body {
+    background: #0f172a; padding: 25px; border-radius: 12px; border: 1px solid #1e293b; line-height: 1.8; color: #cbd5e1; min-height: 300px;
+}
+.note-body h4 { color: #60a5fa; margin-bottom: 10px; border-bottom: 1px solid #334155; padding-bottom: 5px;}
+</style>
+</head>
+
+<body>
+
+<div id="loginSection" class="login-wrapper">
+<canvas id="loginCanvas"></canvas>
+<div class="card">
+<div id="loginForm">
+<h2>SkillExchange</h2>
+<input type="text" id="loginUser" placeholder="Username">
+<input type="password" id="loginPass" placeholder="Password">
+<button class="login-btn" onclick="login()">Sign In</button>
+<button class="trial-btn" onclick="freeTrial()">Guest Access</button>
+<div class="link" onclick="showRegister()">New Developer? Create Account</div>
+</div>
+<div id="registerForm" class="hidden">
+<h2>Join the Network</h2>
+<input type="text" id="regUser" placeholder="Username">
+<input type="password" id="regPass" placeholder="Password">
+<button class="register-btn" onclick="register()">Register</button>
+<div class="link" onclick="showLogin()">Already have account?</div>
+</div>
+</div>
+</div>
+
+<nav id="mainNav">
+<div class="nav-inner">
+<div class="logo">SKILL<span style="color:#fff">EXCHANGE</span></div>
+<div class="nav-links">
+<a onclick="navigate('home')">Home</a>
+<a onclick="navigate('courses')">Modules</a>
+<a onclick="navigate('exchange')">Skill Swap</a>
+<a onclick="navigate('arcade')">Games</a>
+<a onclick="navigate('dashboard')">Stats</a>
+<div class="admin-pill" id="adminPanelBtn" style="cursor:pointer;" onclick="navigate('admin')">
+    <img src="https://ui-avatars.com/api/?name=Admin+User&background=60a5fa&color=fff" alt="Profile" id="navAvatar">
+    <span id="navName">Admin User</span>
+</div>
+<a onclick="logout()" style="color:#f87171">Logout</a>
+</div>
+</div>
+</nav>
+
+<section id="home" class="page active">
+<div class="hero">
+<h1>Architect Your <span>Future.</span></h1>
+<p>The premier skill-sharing ecosystem for computer science enthusiasts. From algorithmic complexity to full-stack deployment, master the tools that power the modern world.</p>
+<div id="dailyStreakDisplay" class="streak-counter">🔥 <span id="streakNum">0</span> Day Coding Streak</div>
+</div>
+</section>
+
+<section id="exchange" class="page">
+    <div class="back-btn" onclick="navigate('home')">← Back</div>
+    <h2 style="margin-bottom: 10px;">Peer-to-Peer Exchange</h2>
+    <p style="color:#94a3b8; margin-bottom: 30px;">Don't just learn—teach. Post your expertise and help a fellow developer.</p>
+    
+    <div class="exchange-container">
+        <div class="exchange-sidebar">
+            <h3 style="color: #60a5fa; margin-bottom: 15px;">List Your Skill</h3>
+            <label style="font-size: 13px; color: #94a3b8;">Expertise Title</label>
+            <input type="text" id="skillName" placeholder="e.g. React Hooks & Context">
+            <label style="font-size: 13px; color: #94a3b8; display: block; margin-top: 15px;">Offer Description</label>
+            <textarea id="skillDesc" rows="4" placeholder="I can help you build your first API or debug..."></textarea>
+            <button class="exchange-btn" onclick="postSkill()" style="width: 100%;">Broadcast My Offer</button>
+        </div>
+
+        <div>
+            <h3 style="margin-bottom: 20px;">Available Mentors</h3>
+            <div id="exchangeMarketplace" class="grid" style="margin-top: 0;">
+                </div>
+        </div>
+    </div>
+</section>
+
+<section id="arcade" class="page">
+    <div class="back-btn" onclick="navigate('home')">← Back</div>
+    <h2>Dev Arcade</h2>
+    <div class="arcade-grid">
+        <div class="game-card">
+            <h3>Binary Bit-Cracker</h3>
+            <p>Decode the letter from binary!</p>
+            <div id="binaryDisplay" class="decode-area">01000001</div>
+            <input type="text" id="decodeInput" placeholder="Type letter (A-Z)">
+            <button class="primary-btn" onclick="checkDecode()">Submit Cipher</button>
+        </div>
+        <div class="game-card">
+            <h3>Syntax Recall</h3>
+            <p>Memorize the snippet before it vanishes!</p>
+            <div id="memoryDisplay" class="memory-box">Press Start</div>
+            <input type="text" id="memoryInput" placeholder="Enter snippet..." class="hidden">
+            <button id="memoryBtn" class="primary-btn" onclick="startMemoryGame()">Start Syntax.exe</button>
+        </div>
+    </div>
+</section>
+
+<section id="admin" class="page">
+    <div class="back-btn" onclick="navigate('dashboard')">← Return</div>
+    <h2>Admin Profile</h2>
+    <div class="card-course" style="width: 100%; max-width: 400px; margin-top: 20px;">
+        <img src="" id="adminLargeAvatar" style="width:80px; height:80px; border-radius:50%; border:3px solid #60a5fa; margin-bottom:15px;">
+        <h3 id="adminLargeName">User Profile</h3>
+        <p style="color:#94a3b8">Role: System Administrator</p>
+        <hr style="margin:15px 0; border:0; border-top:1px solid #334155;">
+        <p>Permissions: Read/Write/Execute</p>
+        <p>Status: <span style="color:#10b981">Online</span></p>
+    </div>
+</section>
+
+<section id="courses" class="page">
+<div class="back-btn" onclick="navigate('home')">← Back</div>
+<h2>Knowledge Modules</h2>
+<div id="courseGrid" class="grid"></div>
+</section>
+
+<section id="dashboard" class="page">
+    <div class="back-btn" onclick="navigate('home')">← Back</div>
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 30px;">
+        <div>
+            <h2>User Statistics</h2>
+            <div class="card-course" style="margin-top: 20px;">
+                <h3>Current Reputation</h3>
+                <h1 style="font-size: 48px; color: #60a5fa;">XP: <span id="mockScore">0</span></h1>
+                <p>Login Streak: <span id="dashStreak">0</span> Days</p>
+            </div>
+        </div>
+        <div>
+            <h3>Learning Wishlist</h3>
+            <div id="wishlistContainer" class="wishlist-container" style="margin-top: 20px;"></div>
+        </div>
+    </div>
+</section>
+
+<div id="mockModal" class="modal">
+<div class="modal-content">
+<div class="timer">Time Left: <span id="timeLeft">03:00</span></div>
+<h3 id="mockTitle">Assessment</h3>
+<div id="questionsContainer"></div>
+<button class="primary-btn" onclick="submitTest()">Finish & Grade</button>
+</div>
+</div>
+
+<div id="notesModal" class="modal">
+    <div class="modal-content" style="max-width: 850px;">
+        <h3 id="notesTitle" style="margin-bottom: 20px; color: #60a5fa;">Library</h3>
+        <div id="notesHeader" class="notes-header" style="display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 15px;"></div>
+        <div id="notesBody" class="note-body"></div>
+        <button class="primary-btn" onclick="document.getElementById('notesModal').style.display='none'">Exit Library</button>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+
+/* STUDY LIBRARY CONTENT */
+const studyLibrary = {
+    "Java Professional": [
+        {t:"Ch 1: JVM Internals", c:"Understanding the Java Virtual Machine. JRE vs JDK. The lifecycle of a ClassLoader (Loading, Linking, Initialization). Understanding Bytecode and JIT Compilation."},
+        {t:"Ch 2: Memory Management", c:"Stack vs Heap. Understanding the Garbage Collector (G1, ZGC). How objects are allocated and when memory leaks occur in Java."},
+        {t:"Ch 3: Concurrency", c:"Threads, Runnable, and Callable. Synchronization and Locks. Using the ExecutorService and ForkJoinPool for parallel processing."},
+        {t:"Ch 4: Collections Deep Dive", c:"ArrayList vs LinkedList. Internal working of HashMap (Buckets & Hashing). ConcurrentHashMap and thread-safe collections."},
+        {t:"Ch 5: Java Streams API", c:"Functional programming in Java. Map, Filter, Reduce. Parallel streams and the 'Optional' type to prevent NullPointerExceptions."},
+        {t:"Ch 6: Spring Framework", c:"Introduction to Dependency Injection (DI) and Inversion of Control (IoC). Building REST APIs with Spring Boot."},
+        {t:"Ch 7: Deployment", c:"Maven and Gradle build tools. Packaging JARs and deploying Java apps using Docker containers."}
+    ],
+    "Python for AI": [
+        {t:"Ch 1: NumPy Mastery", c:"Arrays and Vectorization. Why NumPy is faster than Python lists. Slicing, Broadcasting, and Linear Algebra operations."},
+        {t:"Ch 2: Data Cleaning", c:"Pandas DataFrames. Handling missing data (NaN). GroupBy, Merge, and Pivot tables for data analysis."},
+        {t:"Ch 3: Visualizations", c:"Matplotlib and Seaborn. Plotting distributions, heatmaps, and scatter plots to identify data trends."},
+        {t:"Ch 4: Machine Learning basics", c:"Scikit-learn. Supervised vs Unsupervised learning. Regression, Classification, and Clustering algorithms."},
+        {t:"Ch 5: Deep Learning Prep", c:"Tensors and Computational Graphs. Introduction to PyTorch and TensorFlow architectures."},
+        {t:"Ch 6: Model Evaluation", c:"Accuracy, Precision, Recall, and F1-Score. Confusion matrices and ROC curves."},
+        {t:"Ch 7: AI Ethics", c:"Understanding bias in training data. Developing responsible and explainable AI systems."}
+    ],
+    "Advanced C++": [
+        {t:"Ch 1: Pointer Arithmetic", c:"Memory addresses, dereferencing, and raw pointers. Understanding the stack and the heap manually."},
+        {t:"Ch 2: Smart Pointers", c:"RAII Principle. unique_ptr, shared_ptr, and weak_ptr. Preventing memory leaks in modern C++."},
+        {t:"Ch 3: Template Metaprogramming", c:"Writing code that generates code. Generic functions and classes. The power of the STL (Standard Template Library)."},
+        {t:"Ch 4: Move Semantics", c:"L-values vs R-values. std::move and move constructors to optimize performance and reduce copying."},
+        {t:"Ch 5: C++ 20 Concepts", c:"Constraining templates with Concepts. Improving compiler errors and code readability."},
+        {t:"Ch 6: Multi-threading", c:"std::thread, mutexes, and atomic variables. Developing high-performance systems."},
+        {t:"Ch 7: Graphics & Game Dev", c:"Integrating C++ with OpenGL or DirectX. Understanding the game loop and rendering pipeline."}
+    ],
+    "Modern JS": [
+        {t:"Ch 1: ES6+ Features", c:"Arrow functions, Destructuring, Spread/Rest operators. Template literals and Classes."},
+        {t:"Ch 2: Asynchronous JS", c:"The Event Loop. Callbacks, Promises, and Async/Await. Handling API requests with Fetch."},
+        {t:"Ch 3: Closures & Scope", c:"Lexical scoping. How closures work and why they are useful for data privacy."},
+        {t:"Ch 4: The DOM & Events", c:"Efficient DOM manipulation. Event bubbling and delegation. Building interactive UI elements."},
+        {t:"Ch 5: React Fundamentals", c:"Components, Props, and State. The virtual DOM. Functional components vs Class components."},
+        {t:"Ch 6: State Management", c:"Context API and introduction to Redux. Managing global state in complex applications."},
+        {t:"Ch 7: JS Tooling", c:"Webpack, Babel, and NPM. Setting up a professional development environment."}
+    ],
+    "Data Structures": [
+        {t:"Ch 1: Big O Notation", c:"Analyzing time and space complexity. Best, Average, and Worst-case scenarios."},
+        {t:"Ch 2: Linked Lists", c:"Singly vs Doubly Linked Lists. Implementation and use cases in low-level memory management."},
+        {t:"Ch 3: Stacks & Queues", c:"LIFO and FIFO principles. Implementing stacks for undo operations and queues for task scheduling."},
+        {t:"Ch 4: Trees & Graphs", c:"Binary Search Trees (BST). Breadth-First Search (BFS) vs Depth-First Search (DFS)."},
+        {t:"Ch 5: Hash Tables", c:"Collision resolution techniques. Hashing functions and constant time lookups O(1)."},
+        {t:"Ch 6: Sorting Algorithms", c:"QuickSort, MergeSort, and HeapSort. When to use which algorithm."},
+        {t:"Ch 7: Dynamic Programming", c:"Memoization and Tabulation. Solving complex problems like the Knapsack or Fibonacci sequence efficiently."}
+    ],
+    "System Design": [
+        {t:"Ch 1: Scalability", c:"Vertical vs Horizontal scaling. Understanding Load Balancers and High Availability."},
+        {t:"Ch 2: Caching Strategies", c:"Redis and Memcached. CDN (Content Delivery Networks) and Database caching."},
+        {t:"Ch 3: Microservices", c:"Monolithic vs Microservice architecture. API Gateways and Service Mesh."},
+        {t:"Ch 4: Databases", c:"SQL vs NoSQL. Replication, Sharding, and CAP Theorem (Consistency, Availability, Partition Tolerance)."},
+        {t:"Ch 5: Message Queues", c:"Asynchronous communication. RabbitMQ and Kafka for decoupling services."},
+        {t:"Ch 6: Monitoring", c:"Logging, Metrics, and Tracing. Using Prometheus and Grafana for system health."},
+        {t:"Ch 7: Real-world Case", c:"Designing a system like Twitter, Netflix, or Uber from scratch."}
+    ],
+    "SQL Mastery": [
+        {t:"Ch 1: Relational Algebra", c:"The math behind SQL. Tables, Rows, and Primary Keys."},
+        {t:"Ch 2: Complex Joins", c:"Inner, Left, Right, and Full Outer Joins. Cross Joins and Self Joins."},
+        {t:"Ch 3: Aggregations", c:"Group By, Having, and Window Functions (Rank, Row_Number)."},
+        {t:"Ch 4: Subqueries", c:"Correlated vs Non-correlated subqueries. Using 'WITH' clauses (CTEs)."},
+        {t:"Ch 5: Indexing", c:"B-Trees and Hash Indexes. Optimizing slow queries and understanding 'Explain Plan'."},
+        {t:"Ch 6: Transactions", c:"ACID Properties. Rollback, Commit, and Isolation levels (Read Committed, Serializable)."},
+        {t:"Ch 7: Stored Procedures", c:"Writing Triggers and Functions to automate database logic."}
+    ],
+    "Neural Networks": [
+        {t:"Ch 1: The Neuron", c:"Anatomy of an artificial neuron. Weights, Biases, and Activation functions (Sigmoid, ReLU, Tanh)."},
+        {t:"Ch 2: Forward Propagation", c:"How data flows through layers. Matrix multiplication in deep learning."},
+        {t:"Ch 3: Backpropagation", c:"The Chain Rule. Gradient Descent and Optimizer algorithms (Adam, RMSprop)."},
+        {t:"Ch 4: Overfitting", c:"Regularization techniques (L1/L2). Dropout and early stopping to improve generalization."},
+        {t:"Ch 5: CNNs", c:"Convolutional Neural Networks for image recognition. Pooling and Flattening layers."},
+        {t:"Ch 6: RNNs & LSTMs", c:"Recurrent networks for sequential data. Understanding 'Vanishing Gradients' in long sequences."},
+        {t:"Ch 7: Transformers", c:"The Attention mechanism. Introduction to Large Language Models (LLMs) and BERT/GPT architectures."}
+    ]
+};
+
+/* MOCK TEST QUESTION BANK - UPDATED WITH REAL QUESTIONS */
+const technicalQuestionBank = {
+    "Java Professional": [
+        {q: "Which keyword is used to prevent a method from being overridden by a subclass?", a: ["static", "abstract", "final", "volatile"], correct: 2},
+        {q: "Which area of the JVM memory stores local variables and partial results?", a: ["Heap", "Stack", "Method Area", "Program Counter Register"], correct: 1},
+        {q: "Which interface in Java provides the ability for an object to be serialized?", a: ["Externalizable", "Serializable", "Cloneable", "Comparable"], correct: 1}
+    ],
+    "Python for AI": [
+        {q: "Which NumPy function is used to change the shape of an array without changing its data?", a: ["reshape()", "resize()", "flatten()", "transpose()"], correct: 0},
+        {q: "In Scikit-learn, which method is used to train a model?", a: ["predict()", "score()", "fit()", "transform()"], correct: 2},
+        {q: "What is the primary purpose of the 'Adam' optimizer in neural networks?", a: ["Weight initialization", "Adaptive learning rate optimization", "Data augmentation", "Feature selection"], correct: 1}
+    ],
+    "Advanced C++": [
+        {q: "What is the size of an empty class in C++?", a: ["0 bytes", "1 byte", "4 bytes", "8 bytes"], correct: 1},
+        {q: "Which smart pointer allows multiple pointers to share ownership of the same resource?", a: ["unique_ptr", "weak_ptr", "shared_ptr", "auto_ptr"], correct: 2},
+        {q: "In C++, which keyword is used to allow a function in a base class to be overridden in a derived class?", a: ["override", "virtual", "static", "abstract"], correct: 1}
+    ],
+    "Modern JS": [
+        {q: "What will 'console.log(typeof NaN)' output?", a: ["'number'", "'NaN'", "'undefined'", "'object'"], correct: 0},
+        {q: "Which operator is used to check both value and type equality in JavaScript?", a: ["==", "===", "=", "!="], correct: 1},
+        {q: "What is the output of 'console.log(0.1 + 0.2 === 0.3)'?", a: ["true", "false", "undefined", "TypeError"], correct: 1}
+    ],
+    "Data Structures": [
+        {q: "What is the average time complexity of searching for an element in a Hash Table?", a: ["O(1)", "O(log n)", "O(n)", "O(n log n)"], correct: 0},
+        {q: "Which data structure is typically used for implementing Breadth-First Search (BFS)?", a: ["Stack", "Queue", "Priority Queue", "Linked List"], correct: 1},
+        {q: "What is the worst-case time complexity of the QuickSort algorithm?", a: ["O(n log n)", "O(n)", "O(n^2)", "O(log n)"], correct: 2}
+    ],
+    "System Design": [
+        {q: "Which principle focuses on ensuring a system remains operational even if some components fail?", a: ["Scalability", "Reliability", "Fault Tolerance", "Consistency"], correct: 2},
+        {q: "What is a 'Sticky Session' in the context of load balancing?", a: ["Session data stored in a DB", "Routing a user to the same server for the entire session", "Caching static content", "Load balancing across regions"], correct: 1},
+        {q: "What does 'Eventual Consistency' mean in distributed systems?", a: ["Data is never consistent", "Data will eventually become consistent after a period", "Strong consistency across all nodes", "Consistency only on writes"], correct: 1}
+    ],
+    "SQL Mastery": [
+        {q: "Which SQL constraint ensures that all values in a column are different?", a: ["PRIMARY KEY", "FOREIGN KEY", "UNIQUE", "CHECK"], correct: 2},
+        {q: "What is the purpose of the SQL 'RANK()' function?", a: ["Sort data", "Assign a unique rank to each row within a partition", "Aggregate values", "Filter rows"], correct: 1},
+        {q: "Which normal form deals with removing partial functional dependencies?", a: ["1NF", "2NF", "3NF", "BCNF"], correct: 1}
+    ],
+    "Neural Networks": [
+        {q: "What is the 'Vanishing Gradient' problem primarily associated with?", a: ["ReLU activation", "Deep networks with Sigmoid/Tanh", "Dropout", "Large batch sizes"], correct: 1},
+        {q: "Which layer in a CNN is responsible for reducing the spatial dimensions of the input?", a: ["Convolutional layer", "Pooling layer", "Fully connected layer", "Softmax layer"], correct: 1},
+        {q: "What is the purpose of 'Batch Normalization'?", a: ["Reduce training time", "Normalize inputs to each layer", "Prevent overfitting", "All of the above"], correct: 3}
+    ]
+};
+
+/* LOGIN ANIMATION */
+const canvas = document.getElementById('loginCanvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+const characters = "0101010101010101";
+const fontSize = 16;
+const columns = canvas.width / fontSize;
+const drops = [];
+for (let x = 0; x < columns; x++) drops[x] = 1;
+
+function drawMatrix() {
+    ctx.fillStyle = "rgba(11, 15, 25, 0.05)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#60a5fa";
+    ctx.font = fontSize + "px monospace";
+    for (let i = 0; i < drops.length; i++) {
+        const text = characters.charAt(Math.floor(Math.random() * characters.length));
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+        drops[i]++;
+    }
+}
+setInterval(drawMatrix, 40);
+
+const loginSection=document.getElementById("loginSection");
+const mainNav=document.getElementById("mainNav");
+const courseGrid=document.getElementById("courseGrid");
+const mockModal=document.getElementById("mockModal");
+const notesModal=document.getElementById("notesModal");
+const questionsContainer=document.getElementById("questionsContainer");
+const mockScore=document.getElementById("mockScore");
+const timeLeft=document.getElementById("timeLeft");
+const mockTitle=document.getElementById("mockTitle");
+const navName=document.getElementById("navName");
+const wishlistContainer = document.getElementById("wishlistContainer");
+const exchangeMarket = document.getElementById("exchangeMarketplace");
+
+let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+let userXP = parseInt(localStorage.getItem("userXP")) || 0;
+let currentUserName = "Guest User";
+let activeCourseForTest = "";
+
+/* SKILL EXCHANGE LOGIC */
+let peerSkills = [
+    {name: "Python Automation", user: "AliceDev", desc: "Expert in Selenium and OS scripting. I can teach you how to automate browser tasks."},
+    {name: "CSS Architecture", user: "StyleMaster", desc: "Deep dive into BEM, Sass, and modern layouts. No more broken divs."},
+    {name: "AWS Essentials", user: "CloudPro", desc: "Setting up EC2 instances and S3 buckets for the first time."}
+];
+
+function renderExchange() {
+    exchangeMarket.innerHTML = peerSkills.map(s => `
+        <div class="card-course">
+            <div>
+                <span class="mentor-badge">Mentor: ${s.user}</span>
+                <div class="course-title">${s.name}</div>
+                <p style="font-size: 13px; color: #94a3b8; line-height: 1.5;">${s.desc}</p>
+            </div>
+            <button class="exchange-btn" onclick="alert('Connection request sent to ${s.user}!')">Request Session</button>
+        </div>
+    `).join('');
+}
+
+window.postSkill = function() {
+    const sName = document.getElementById("skillName").value;
+    const sDesc = document.getElementById("skillDesc").value;
+    if(!sName || !sDesc) return alert("Fields cannot be empty");
+    
+    peerSkills.unshift({name: sName, user: currentUserName, desc: sDesc});
+    document.getElementById("skillName").value = "";
+    document.getElementById("skillDesc").value = "";
+    renderExchange();
+    alert("Skill broadcasted to the community!");
+};
+
+window.showRegister=()=> {
+    document.getElementById("registerForm").classList.remove("hidden");
+    document.getElementById("loginForm").classList.add("hidden");
+}
+window.showLogin=()=> {
+    document.getElementById("registerForm").classList.add("hidden");
+    document.getElementById("loginForm").classList.remove("hidden");
+}
+
+window.register=function(){
+    localStorage.setItem("username",document.getElementById("regUser").value);
+    localStorage.setItem("password",document.getElementById("regPass").value);
+    alert("Account Created!");
+    showLogin();
+}
+
+window.login=function(){
+    const u = document.getElementById("loginUser").value;
+    const p = document.getElementById("loginPass").value;
+    if(u === localStorage.getItem("username") && p === localStorage.getItem("password")){
+        enterApp(u);
+    } else alert("Invalid Credentials");
+}
+
+window.freeTrial=function(){ enterApp("Guest User"); }
+
+function enterApp(name) {
+    currentUserName = name;
+    loginSection.style.display="none";
+    mainNav.style.display="block";
+    navName.innerText = name;
+    document.getElementById("adminLargeName").innerText = name;
+    mockScore.innerText = userXP;
+    const avatarUrl = `https://ui-avatars.com/api/?name=${name}&background=60a5fa&color=fff`;
+    document.getElementById("navAvatar").src = avatarUrl;
+    document.getElementById("adminLargeAvatar").src = avatarUrl;
+    
+    updateStreak();
+    renderWishlist();
+    renderCourses();
+    renderExchange();
+}
+
+/* STREAK LOGIC */
+function updateStreak() {
+    const today = new Date().toDateString();
+    const lastLogin = localStorage.getItem("lastLoginDate");
+    let streak = parseInt(localStorage.getItem("codingStreak") || "0");
+
+    if (lastLogin !== today) {
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        if (lastLogin === yesterday.toDateString()) streak++;
+        else streak = 1; 
+        localStorage.setItem("lastLoginDate", today);
+        localStorage.setItem("codingStreak", streak);
+    }
+    document.getElementById("streakNum").innerText = streak;
+    document.getElementById("dashStreak").innerText = streak;
+}
+
+window.logout=()=>location.reload();
+
+window.navigate=function(page){
+    document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+    document.getElementById(page).classList.add("active");
+}
+
+/* GAMES */
+let currentBinary = "";
+let currentLetter = "";
+function genBinary() {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    currentLetter = chars[Math.floor(Math.random() * chars.length)];
+    currentBinary = currentLetter.charCodeAt(0).toString(2).padStart(8, '0');
+    document.getElementById("binaryDisplay").innerText = currentBinary;
+}
+window.checkDecode = function() {
+    const input = document.getElementById("decodeInput").value.toUpperCase();
+    if(input === currentLetter) {
+        alert("Cipher Cracked! +10 XP");
+        updateXP(10);
+        genBinary();
+        document.getElementById("decodeInput").value = "";
+    } else alert("Incorrect Bit Pattern");
+}
+genBinary();
+
+const snippets = ["console.log()", "git commit -m", "npm install", "useState(null)", "docker-compose up"];
+let currentSnippet = "";
+
+window.startMemoryGame = function() {
+    const display = document.getElementById("memoryDisplay");
+    const input = document.getElementById("memoryInput");
+    const btn = document.getElementById("memoryBtn");
+    currentSnippet = snippets[Math.floor(Math.random() * snippets.length)];
+    display.innerText = currentSnippet;
+    btn.classList.add("hidden");
+    setTimeout(() => {
+        display.innerText = "****";
+        input.classList.remove("hidden");
+        input.value = "";
+        input.focus();
+        input.onkeyup = (e) => {
+            if(e.key === "Enter") {
+                if(input.value === currentSnippet) {
+                    alert("Syntax Verified! +10 XP");
+                    updateXP(10);
+                } else alert("Syntax Error");
+                input.classList.add("hidden");
+                btn.classList.remove("hidden");
+                display.innerText = "Press Start";
+            }
+        };
+    }, 2000);
+}
+
+function updateXP(val) {
+    userXP += val;
+    localStorage.setItem("userXP", userXP);
+    mockScore.innerText = userXP;
+}
+
+/* WISHLIST */
+window.toggleWishlist = function(course) {
+    if(wishlist.includes(course)) wishlist = wishlist.filter(item => item !== course);
+    else wishlist.push(course);
+    localStorage.setItem("wishlist", JSON.stringify(wishlist));
+    renderCourses();
+    renderWishlist();
+}
+
+function renderWishlist() {
+    if(wishlist.length === 0) {
+        wishlistContainer.innerHTML = '<p style="color:#64748b">Empty Library</p>';
+        return;
+    }
+    wishlistContainer.innerHTML = wishlist.map(item => `
+        <div style="background:#1e293b; padding:12px; border-radius:10px; margin-bottom:10px; display:flex; justify-content:space-between;">
+            <span>📘 ${item}</span>
+            <span style="color:#f87171; cursor:pointer" onclick="toggleWishlist('${item}')">×</span>
+        </div>
+    `).join('');
+}
+
+/* MODULES RENDER */
+const courses=["Java Professional","Python for AI","Advanced C++","Modern JS","Data Structures","System Design","SQL Mastery","Neural Networks"];
+
+function renderCourses() {
+    courseGrid.innerHTML = "";
+    courses.forEach(course=>{
+        const isWished = wishlist.includes(course) ? 'active' : '';
+        courseGrid.innerHTML+=`
+        <div class="card-course">
+            <button class="wishlist-btn ${isWished}" onclick="toggleWishlist('${course}')">❤</button>
+            <div>
+                <div class="course-title">${course}</div>
+                <p style="font-size:12px; color:#94a3b8; margin-bottom:15px;">Advanced implementation and theory.</p>
+            </div>
+            <div>
+                <button class="study-btn" style="width:100%" onclick="openStudy('${course}')">Study Notes</button>
+                <button class="primary-btn" style="width:100%" onclick="startMock('${course}')">Assessment</button>
+            </div>
+        </div>`;
+    });
+}
+
+/* STUDY SYSTEM */
+window.openStudy = function(course) {
+    const title = document.getElementById("notesTitle");
+    const header = document.getElementById("notesHeader");
+    const body = document.getElementById("notesBody");
+    const modal = document.getElementById("notesModal");
+    const pages = studyLibrary[course];
+
+    title.innerText = course + " Documentation";
+    header.innerHTML = "";
+    
+    pages.forEach((page, idx) => {
+        const btn = document.createElement("button");
+        btn.className = "note-tab-btn" + (idx === 0 ? " active" : "");
+        btn.innerText = "Page " + (idx + 1);
+        btn.onclick = () => {
+            document.querySelectorAll(".note-tab-btn").forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+            body.innerHTML = `<h4>${page.t}</h4><p>${page.c}</p>`;
+        };
+        header.appendChild(btn);
+    });
+
+    body.innerHTML = `<h4>${pages[0].t}</h4><p>${pages[0].c}</p>`;
+    modal.style.display = "flex";
+}
+
+/* REAL MOCK TEST SYSTEM */
+window.startMock=function(course){
+    activeCourseForTest = course;
+    mockTitle.innerText = course + " Certification Test";
+    questionsContainer.innerHTML = "";
+    const testData = technicalQuestionBank[course];
+
+    testData.forEach((item, idx) => {
+        let optionsHtml = item.a.map((opt, oIdx) => `
+            <label class="option-label">
+                <input type="radio" name="q${idx}" value="${oIdx}"> ${opt}
+            </label>
+        `).join('');
+
+        questionsContainer.innerHTML += `
+            <div class="question-block">
+                <span class="question-text">${idx + 1}. ${item.q}</span>
+                ${optionsHtml}
+            </div>
+        `;
+    });
+    mockModal.style.display="flex";
+}
+
+window.submitTest=function(){
+    const testData = technicalQuestionBank[activeCourseForTest];
+    let score = 0;
+
+    testData.forEach((item, idx) => {
+        const selected = document.querySelector(`input[name="q${idx}"]:checked`);
+        if (selected && parseInt(selected.value) === item.correct) {
+            score++;
+        }
+    });
+
+    const xpEarned = score * 50;
+    updateXP(xpEarned);
+    
+    mockModal.style.display="none";
+    alert(`Assessment Complete!\n\nScore: ${score}/${testData.length}\nXP Earned: +${xpEarned}`);
+    navigate('dashboard');
+}
+
+});
+</script>
+
+</body>
+</html>
